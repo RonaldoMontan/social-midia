@@ -3,8 +3,6 @@ package repositori
 import (
 	"api/src/models"
 	"database/sql"
-
-	"golang.org/x/tools/go/analysis/passes/defers"
 )
 
 type users struct {
@@ -30,7 +28,7 @@ func (repositori users) CreateUser(user models.User) (uint64, error) {
 	}
 	defer statement.Close()
 
-	result, erro := statement.Exec(user.Name, user.Nick, user.Password)
+	result, erro := statement.Exec(user.Name, user.Nick, user.Email, user.Password)
 	if erro != nil{
 		return 0, erro
 	}
