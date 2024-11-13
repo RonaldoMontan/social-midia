@@ -4,6 +4,7 @@ import (
 	"api/src/db"
 	"api/src/models"
 	"api/src/repositori"
+	"api/src/response"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -15,13 +16,13 @@ func CreateUser(w http.ResponseWriter, r *http.Request){
 
 	bodyRequest, erro := io.ReadAll(r.Body)
 	if erro != nil {
-		log.Fatal(erro)
+		response.Erro(w, http.StatusUnprocessableEntity, erro)
+		return
 	}
 
 	var user models.User
-
 	if erro = json.Unmarshal(bodyRequest, &user); erro != nil {
-		log.Fatal(erro)
+		response.Erro(w, http.StatusBadRequest, erro)
 	}
 
 	db, erro := db.Connect()
