@@ -16,7 +16,18 @@ type User struct {
 	CreatedAt time.Time `json:"createdAt, omitempty"`
 }
 
-func (user *User) Validate() error {
+// chama os métodos para validar e formatar o usuario
+func (user *User) Prepare() error{
+
+	if erro := user.validate(); erro != nil {
+		return erro
+	}
+
+	user.format()
+	return nil
+}
+
+func (user *User) validate() error {
 
 	if user.Name == "" {
 		return errors.New("The name is required")
@@ -37,7 +48,7 @@ func (user *User) Validate() error {
 	return nil
 }
 
-func (user *User) Format() {
+func (user *User) format() {
 
 	user.Name = strings.TrimSpace(user.Name)
 	user.Nick = strings.TrimSpace(user.Nick)
