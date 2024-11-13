@@ -6,9 +6,7 @@ import (
 	"api/src/repositori"
 	"api/src/response"
 	"encoding/json"
-	"fmt"
 	"io"
-	"log"
 	"net/http"
 )
 
@@ -23,21 +21,25 @@ func CreateUser(w http.ResponseWriter, r *http.Request){
 	var user models.User
 	if erro = json.Unmarshal(bodyRequest, &user); erro != nil {
 		response.Erro(w, http.StatusBadRequest, erro)
+		return
 	}
 
 	db, erro := db.Connect()
 	if erro != nil{
-		log.Fatal(erro)
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
 	}
 	defer db.Close()
 
 	repositori := repositori.NewRepositoriUsers(db)
-	userId, erro := repositori.CreateUser(user)
+	user.Id, erro = repositori.CreateUser(user)
 	if erro != nil{
-		log.Fatal(erro)
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
 	}
 
-	w.Write([]byte(fmt.Sprintf("ID insert: %d", userId)))
+	response.JSON(w, http.StatusCreated, user)
+
 }
 
 func SearchAllUsers(w http.ResponseWriter, r *http.Request){
