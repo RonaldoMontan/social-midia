@@ -3,6 +3,7 @@ package repositori
 import (
 	"api/src/models"
 	"database/sql"
+	"fmt"
 )
 
 type users struct {
@@ -39,5 +40,41 @@ func (repositori users) CreateUser(user models.User) (uint64, error) {
 	}
 
 	return uint64(lastId), nil
+}
 
+//Traz todos os usuarios que atende ao filtro
+func (repositori users) Search(nameOrNick string) ([]models.User, error){
+
+	nameOrNick = fmt.Sprintf("%%%s%%", nameOrNick)
+	
+	row, erro := repositori.db.Query(
+		"SELECT id, name, nick, email, createdAt FROM users where name LIKE ? or nick LIKE ?",
+		nameOrNick, nameOrNick,
+	)
+
+	if erro != nil {
+		return nil, erro
+	}
+	defer row.Close()
+
+	var users []models.User
+
+	for row.Next(){
+
+		var user models.User
+
+		if erro = row.Scan(
+			&user.Id,
+			&user.Name,
+			&user.Nick,
+			user.Email,
+			user.CreatedAt,
+		
+		); erro != nil {
+			return nil, erro
+		}
+
+		users = append(users, user)
+	}
+	return users, nil
 }
