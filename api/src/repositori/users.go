@@ -67,8 +67,8 @@ func (repositori users) Search(nameOrNick string) ([]models.User, error){
 			&user.Id,
 			&user.Name,
 			&user.Nick,
-			user.Email,
-			user.CreatedAt,
+			&user.Email,
+			&user.CreatedAt,
 		
 		); erro != nil {
 			return nil, erro
