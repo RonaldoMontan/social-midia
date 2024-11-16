@@ -78,3 +78,36 @@ func (repositori users) Search(nameOrNick string) ([]models.User, error){
 	}
 	return users, nil
 }
+
+//Traz o usuario por Id fornecido
+func (repositori users) SearchForId(userId uint64) (models.User, error){
+
+	row, erro := repositori.db.Query(
+		"SELECT id, name, nick, email, createdAt FROM users WHERE id = ?", 
+		userId,
+	)
+
+	if erro != nil {
+		return models.User{}, erro
+	}
+	defer row.Close()
+
+	var user models.User
+
+	if row.Next(){
+
+		if erro = row.Scan(
+			&user.Id,
+			&user.Name,
+			&user.Nick,
+			&user.Email,
+			&user.CreatedAt,
+		
+		); erro != nil {
+			return models.User{}, erro
+		}
+	}
+
+	return user, nil
+
+}
