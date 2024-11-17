@@ -28,7 +28,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	if erro = user.Prepare(); erro != nil{
+	if erro = user.Prepare("register"); erro != nil{
 		response.Erro(w, http.StatusBadRequest, erro)
 		return
 	}
@@ -94,12 +94,52 @@ func SearchUser(w http.ResponseWriter, r *http.Request){
 		return
 	}
 	response.JSON(w, http.StatusOK, user)
-
 }
 
 func AlterUser(w http.ResponseWriter, r *http.Request){
 
-	w.Write([]byte("Alter information the User !"))
+	//Lê valores de parametros da url
+	parameters := mux.Vars(r)
+
+	userId, erro := strconv.ParseUint(parameters["id"], 10, 64)
+	if erro != nil {
+		
+		response.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+	
+	//Lê valores do corpo da requisição
+	bodyRequest, erro := io.ReadAll(r.Body)
+	if erro != nil {
+		
+		response.Erro(w, http.StatusUnprocessableEntity, erro)
+		return
+	}
+
+	var user models.User
+	if erro = json.Unmarshal(bodyRequest, &user); erro != nil {
+		
+		response.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+	if erro = user.Prepare("edition"); erro != nil{
+		response.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+	
+	db, erro := db.Connect()
+	if erro != nil{
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repositori := repositori.NewRepositoriUsers(db)
+	if erro = repositori.AlterUser(userId, user); erro != nil {
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	response.JSON(w, http.StatusNoContent, nil)	
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request){
