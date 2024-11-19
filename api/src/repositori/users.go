@@ -127,5 +127,22 @@ func (repositori users) AlterUser(userId uint64, user models.User) error{
 	}
 
 	return nil
+}
 
+//Apaga as informações de um usuario
+func (repositori users) DeleteUser(userId uint64) error{
+
+	statement, erro := repositori.db.Prepare(
+		"DELETE FROM users WHERE id = ?",
+	)
+	if erro != nil {
+		return erro
+	}
+	defer statement.Close()
+
+	if _, erro = statement.Exec(userId); erro != nil {
+		return erro
+	}
+
+	return nil
 }
