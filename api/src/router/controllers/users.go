@@ -144,5 +144,24 @@ func AlterUser(w http.ResponseWriter, r *http.Request){
 
 func DeleteUser(w http.ResponseWriter, r *http.Request){
 
-	w.Write([]byte("Delete User !"))
+	parameters := mux.Vars(r)
+	userId, erro := strconv.ParseUint(parameters["id"], 10, 64)
+	if erro != nil {
+		response.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	db, erro := db.Connect()
+	if erro != nil{
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repositori := repositori.NewRepositoriUsers(db)
+	if erro = repositori.DeleteUser(userId); erro != nil {
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	response.JSON(w, http.StatusNoContent, nil)
 }
