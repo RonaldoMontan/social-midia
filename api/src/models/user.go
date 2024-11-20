@@ -1,6 +1,7 @@
 package models
 
 import (
+	"api/src/security"
 	"errors"
 	"strings"
 	"time"
@@ -10,7 +11,7 @@ import (
 
 //abstração para representar um usuario navegando na rede social
 type User struct {
-	Id uint64 	`json:"id,omitempty"`
+	Id uint64 	`json:"id, omitempty"`
 	Name string `json:"name, omitempty"`
 	Nick string `json:"nick, omitempty"`
 	Email string `json:"email, omitempty"`
@@ -25,8 +26,12 @@ func (user *User) Prepare(step string) error{
 		return erro
 	}
 
-	user.format()
+	if erro := user.format(step); erro != nil {
+		return erro
+	}
+	
 	return nil
+	
 }
 
 func (user *User) validate(step string) error {
@@ -54,9 +59,20 @@ func (user *User) validate(step string) error {
 	return nil
 }
 
-func (user *User) format() {
+func (user *User) format(step string) error {
 
 	user.Name = strings.TrimSpace(user.Name)
 	user.Nick = strings.TrimSpace(user.Nick)
 	user.Email = strings.TrimSpace(user.Email)
+
+	if step == "register" {
+
+		HashPass, erro := security.Hash(user.Password)
+		if erro != nil{
+			return erro
+		}
+
+		user.Password = string(HashPass)
+	}
+	return nil
 }
