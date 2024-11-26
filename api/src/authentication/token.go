@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -28,6 +29,7 @@ func CreateToken(userId uint64) (string, error){
 
 //Verifica se o token passado na requisição é valido
 func ValidateToken(r  *http.Request) error {
+	
 	tokenString := extractToken(r)
 	token, erro := jwt.Parse(tokenString, returnKeysCheck)
 
@@ -40,7 +42,27 @@ func ValidateToken(r  *http.Request) error {
 	}
 
 	return errors.New("token invalid")
+}
 
+//Retorna o user id que está no token
+func ExtractUserId(r *http.Request) (uint64, error){
+
+	tokenString := extractToken(r)
+	token, erro := jwt.Parse(tokenString, returnKeysCheck)
+
+	if erro != nil {
+		return 0, erro
+	}
+
+	if permission, ok := token.Claims.(jwt.MapClaims); ok && token.Valid{
+
+		userId, erro := strconv.ParseUint(fmt.Sprintf("%.0f", permission["userId"]), 10, 64)
+		if erro != nil {
+			return 0, erro
+		}
+		return userId, nil
+	}
+	return 0, errors.New("token invalid")
 }
 
 func extractToken(r *http.Request) string {
