@@ -26,20 +26,20 @@ var routeUsers = []Route{
 		Uri: "/users/{id}",
 		Metodo: http.MethodGet,
 		Function: controllers.SearchUser,
-		NeedAuth: false,
+		NeedAuth: true,
 	},
 	//Altera um usuario
 	{
 		Uri: "/users/{id}",
 		Metodo: http.MethodPut,
 		Function: controllers.AlterUser,
-		NeedAuth: false,
+		NeedAuth: true,
 	},
 	//Apaga um usuario
 	{
 		Uri: "/users/{id}",
 		Metodo: http.MethodDelete,
 		Function: controllers.DeleteUser,
-		NeedAuth: false,
+		NeedAuth: true,
 	},
 }
