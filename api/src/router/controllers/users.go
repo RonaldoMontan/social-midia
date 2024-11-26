@@ -1,11 +1,13 @@
 package controllers
 
 import (
+	"api/src/authentication"
 	"api/src/db"
 	"api/src/models"
 	"api/src/repositori"
 	"api/src/response"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"strconv"
@@ -107,6 +109,17 @@ func AlterUser(w http.ResponseWriter, r *http.Request){
 		response.Erro(w, http.StatusBadRequest, erro)
 		return
 	}
+
+	userIdOnToken, erro := authentication.ExtractUserId(r)
+	if erro != nil {
+		response.Erro(w, http.StatusUnauthorized, erro)
+		return
+	}
+
+	if userIdOnToken != userId {
+		response.Erro(w, http.StatusForbidden, errors.New("you do not have permission to change this"))
+		return
+	} 
 	
 	//Lê valores do corpo da requisição
 	bodyRequest, erro := io.ReadAll(r.Body)
