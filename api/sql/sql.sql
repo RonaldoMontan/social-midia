@@ -1,6 +1,7 @@
 CREATE DATABASE IF NOT EXISTS devbook;
 Use devbook;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS followers;
 CREATE TABLE users(
     id int auto_increment primary key,
     name varchar(50) not null,
@@ -11,9 +12,9 @@ CREATE TABLE users(
 ) ENGINE=INNODB;
 
 CREATE TABLE followers (
-    id INT NOT NULL,
+    user_id INT NOT NULL,
     follower_id INT NOT NULL,
-    PRIMARY KEY (id, follower_id),
-    FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, follower_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (follower_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=INNODB;
