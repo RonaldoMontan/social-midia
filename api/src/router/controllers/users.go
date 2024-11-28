@@ -8,6 +8,7 @@ import (
 	"api/src/response"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -187,5 +188,43 @@ func DeleteUser(w http.ResponseWriter, r *http.Request){
 		response.Erro(w, http.StatusInternalServerError, erro)
 		return
 	}
+	response.JSON(w, http.StatusNoContent, nil)
+}
+
+func FollowUser(w http.ResponseWriter, r *http.Request){
+
+	followerUserId, erro := authentication.ExtractUserId(r)
+	if erro != nil {
+		response.Erro(w, http.StatusUnauthorized, erro)
+		return
+	}
+
+	parameters := mux.Vars(r)
+	userId, erro := strconv.ParseUint(parameters["id"], 10, 64)
+	if erro != nil {
+		response.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	fmt.Println(followerUserId)
+	fmt.Println(userId)
+	if followerUserId == followerUserId {
+		response.Erro(w, http.StatusForbidden, errors.New("Wait, do you want follow you insame ?"))
+		return
+	}
+
+	db, erro := db.Connect()
+	if erro != nil{
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repositori := repositori.NewRepositoriUsers(db)
+	if erro = repositori.Follow(userId, followerUserId); erro != nil {
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
 	response.JSON(w, http.StatusNoContent, nil)
 }
