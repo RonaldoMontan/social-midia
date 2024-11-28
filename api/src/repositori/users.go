@@ -168,3 +168,19 @@ func (repositori users) SearchEamil(email string) (models.User, error){
 	}
 	return user, nil
 }
+
+func (repositori users) Follow(userId, followerUserId uint64) error{
+	
+	statment, erro := repositori.db.Prepare(
+		"INSERT IGNORE INTO followers (user_id, follower_id) VALUES (?, ?)",
+	)
+	if erro != nil {
+		return erro
+	}
+	defer statment.Close()
+
+	if _, erro = statment.Exec(userId, followerUserId); erro != nil {
+		return erro
+	}
+	return nil
+}
