@@ -8,7 +8,6 @@ import (
 	"api/src/response"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -206,9 +205,7 @@ func FollowUser(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	fmt.Println(followerUserId)
-	fmt.Println(userId)
-	if followerUserId == followerUserId {
+	if followerUserId == userId {
 		response.Erro(w, http.StatusForbidden, errors.New("Wait, do you want follow you insame ?"))
 		return
 	}
