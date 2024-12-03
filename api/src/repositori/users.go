@@ -200,3 +200,36 @@ func (repositori users) Unfollow(userId, followerUserId uint64) error{
 	}
 	return nil
 }
+
+func (repositori users) SearchFollowers(userId uint64) ([]models.User, error) {
+
+	row, erro := repositori.db.Query(`
+	SELECT u.id, u.name, u.nick, u.email, u.createdAt 
+	FROM users u 
+	INNER JOIN followers f ON u.id = f.follower_id
+	WHERE f.user_id = ?;
+	`, userId)
+	
+	if erro != nil {
+		return nil, erro
+	}
+	defer row.Close()
+
+	var followers []models.User
+	for row.Next() {
+		var follower models.User
+
+		if erro = row.Scan(
+			&follower.Id,
+			&follower.Name,
+			&follower.Nick,
+			&follower.Email,
+			&follower.CreatedAt,		
+		); erro != nil {
+			return nil, erro
+		}
+
+		followers = append(followers, follower)
+	}
+	return followers, nil
+}
