@@ -12,9 +12,13 @@ CREATE TABLE users(
 ) ENGINE=INNODB;
 
 CREATE TABLE followers (
-    user_id INT NOT NULL,
-    follower_id INT NOT NULL,
-    PRIMARY KEY (user_id, follower_id),
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (follower_id) REFERENCES users(id) ON DELETE CASCADE
+    user_id int NOT NULL,
+    FOREIGN KEY (user_id)
+    REFERENCES users(id)
+    ON DELETE CASCADE,
+    follower_id int NOT NULL,
+    FOREIGN KEY (follower_id) 
+    REFERENCES users(id) 
+    ON DELETE CASCADE,
+    PRIMARY KEY (user_id, follower_id)
 ) ENGINE=INNODB;
