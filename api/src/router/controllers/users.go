@@ -315,3 +315,49 @@ func SearchFollowing(w http.ResponseWriter, r *http.Request){
 
 	response.JSON(w, http.StatusOK, users)
 }
+
+func UpdatePassword(w http.ResponseWriter, r *http.Request){
+
+	parameters := mux.Vars(r)
+
+	userId, erro := strconv.ParseUint(parameters["id"], 10, 64)
+	if erro != nil {
+		
+		response.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	userIdOnToken, erro := authentication.ExtractUserId(r)
+	if erro != nil {
+		response.Erro(w, http.StatusUnauthorized, erro)
+		return
+	}
+
+	if userIdOnToken != userId {
+		response.Erro(w, http.StatusForbidden, errors.New("you do not have permission to change this"))
+		return
+	} 
+	
+	bodyRequest, erro := io.ReadAll(r.Body)
+	if erro != nil {
+		response.Erro(w, http.StatusUnprocessableEntity, erro)
+		return
+	}
+
+	var password models.Password
+	if erro = json.Unmarshal(bodyRequest, &password); erro != nil {
+		response.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	db, erro := db.Connect()
+	if erro != nil {
+		response.Erro(w, http.StatusInternalServerError, erro)
+	}
+	defer db.Close()
+
+	repositori := repositori.NewRepositoriUsers(db)
+	passwordSavesDB, erro := repositori.SearchPassword(userId)
+	
+
+}
