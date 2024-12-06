@@ -70,4 +70,11 @@ var routeUsers = []Route{
 		Function: controllers.SearchFollowing,
 		NeedAuth: true,
 	},
+	//atualizar senha
+	{
+		Uri: "/users/{id}/update-password",
+		Metodo: http.MethodPost,
+		Function: controllers.UpdatePassword,
+		NeedAuth: true,
+	},
 }
