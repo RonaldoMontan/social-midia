@@ -2,6 +2,7 @@ package repositori
 
 import (
 	"api/src/models"
+	"api/src/repositori"
 	"database/sql"
 	"fmt"
 )
@@ -266,5 +267,27 @@ func (repositori users) SearchFollowing(userId uint64) ([]models.User, error) {
 		users = append(users, user)
 	}
 	return users, nil
+}
 
+// Busca a senha baseado no id amarrado ao token de login
+func (repositori users) SearchPassword(userId uint64) (string, error){
+
+	row, erro := repositori.db.Query(`
+	SELECT u.password
+	FROM users u
+	WHERE u.id = ?
+	`, userId)
+
+	if erro != nil {
+		return "", erro
+	}
+	defer row.Close()
+
+	var user models.User
+	if row.Next() {
+		if erro = row.Scan(&user.Password); erro != nil {
+			return "", erro
+		}
+	}
+	return user.Password, nil
 }
