@@ -233,3 +233,38 @@ func (repositori users) SearchFollowers(userId uint64) ([]models.User, error) {
 	}
 	return followers, nil
 }
+
+// Busca todos os usuarios que um determinado usuario está seguindo 
+func (repositori users) SearchFollowing(userId uint64) ([]models.User, error) {
+
+	row, erro := repositori.db.Query(`
+	SELECT u.id, u.name, u.nick, u.email, u.createdAt
+	FROM users u
+	INNER JOIN followers f on u.id = f.user_id
+	WHERE f.follower_id = ?;
+	`, userId)
+
+	if erro != nil {
+		return nil, erro
+	}
+	defer row.Close()
+
+	var users []models.User
+	for row.Next() {
+		var user models.User
+
+		if erro = row.Scan(
+			&user.Id,
+			&user.Name,
+			&user.Nick,
+			&user.Email,
+			&user.CreatedAt,		
+		); erro != nil {
+			return nil, erro
+		}
+
+		users = append(users, user)
+	}
+	return users, nil
+
+}
