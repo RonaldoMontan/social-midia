@@ -2,7 +2,6 @@ package repositori
 
 import (
 	"api/src/models"
-	"api/src/repositori"
 	"database/sql"
 	"fmt"
 )
