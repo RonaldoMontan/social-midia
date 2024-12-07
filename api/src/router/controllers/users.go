@@ -6,6 +6,7 @@ import (
 	"api/src/models"
 	"api/src/repositori"
 	"api/src/response"
+	"api/src/security"
 	"encoding/json"
 	"errors"
 	"io"
@@ -358,6 +359,25 @@ func UpdatePassword(w http.ResponseWriter, r *http.Request){
 
 	repositori := repositori.NewRepositoriUsers(db)
 	passwordSavesDB, erro := repositori.SearchPassword(userId)
-	
+	if erro != nil {
+		response.Erro(w, http.StatusInternalServerError, erro)
+	}
 
+	if erro = security.VerifyPassword(passwordSavesDB, NowPassword); erro != nil {
+		response.Erro(w, http.StatusUnauthorized, errors.New("the password is not equal"))
+		return
+	}
+
+	passwordWithHash, erro := security.Hash(password.NewPassword)
+	if erro != nil {
+		response.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	if erro = repositori.AlterPassword(userId, string(passwordWithHash)); erro != nil {
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	response.JSON(w, http.StatusNoContent, nil)
 }
