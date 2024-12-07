@@ -363,7 +363,7 @@ func UpdatePassword(w http.ResponseWriter, r *http.Request){
 		response.Erro(w, http.StatusInternalServerError, erro)
 	}
 
-	if erro = security.VerifyPassword(passwordSavesDB, NowPassword); erro != nil {
+	if erro = security.VerifyPassword(passwordSavesDB, password.NowPassword); erro != nil {
 		response.Erro(w, http.StatusUnauthorized, errors.New("the password is not equal"))
 		return
 	}
