@@ -2,6 +2,7 @@ package repositori
 
 import (
 	"api/src/models"
+	"api/src/repositori"
 	"database/sql"
 	"fmt"
 )
@@ -289,4 +290,23 @@ func (repositori users) SearchPassword(userId uint64) (string, error){
 		}
 	}
 	return user.Password, nil
+}
+
+// Atualiza a senha do proprio usuario
+func (repositori users) AlterPassword(userId uint64, newPassword string) error{
+
+	statement, erro := repositori.db.Prepare(
+		"UPDATE users set password = ? WHERE id = ?", newPassword, userId
+	)
+	if erro != nil {
+		return erro
+	}
+	 defer statement.Close()
+
+	if _, erro = statement.Exec(newPassword, userId); erro != nil {
+		return erro
+	}
+
+	return nil
+
 }
