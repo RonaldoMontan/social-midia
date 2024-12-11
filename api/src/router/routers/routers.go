@@ -14,7 +14,7 @@ type Route struct {
 	NeedAuth bool
 }
 
-// Configute coloca todas as rotas dentro do router
+// Configure coloca todas as rotas dentro do router
 func Configure(r *mux.Router) *mux.Router {
 
 	routers := routeUsers
