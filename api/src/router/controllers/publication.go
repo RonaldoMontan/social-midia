@@ -38,11 +38,18 @@ func CreatePublication(w http.ResponseWriter, r *http.Request){
 	db, erro := db.Connect()
 	if erro != nil {
 		response.Erro(w, http.StatusInternalServerError, erro)
+		return
 	}
 	defer db.Close()
 
 	repositori := repositori.NewRepositoriPublication(db)
-	publication.Id, erro := repositori.CreatePublication(publication)
+	publication.Id, erro = repositori.CreatePublication(publication)
+	if erro != nil {
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	response.JSON(w, http.StatusCreated, publication)
 }
 
 // Traz as publicações que apareceriam no feed do usuario
