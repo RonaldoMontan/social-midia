@@ -243,7 +243,7 @@ func UnfollowUser(w http.ResponseWriter, r *http.Request){
 	}
 
 	if followerUserId == userId {
-		response.Erro(w, http.StatusForbidden, errors.New("Wait, do you want unfollow you insame ?"))
+		response.Erro(w, http.StatusForbidden, errors.New("Wait, do you want to unfollow yourselfock ?"))
 		return
 	}
 
