@@ -63,6 +63,28 @@ func CreatePublication(w http.ResponseWriter, r *http.Request){
 // Traz as publicações que apareceriam no feed do usuario
 func SearchPublications(w http.ResponseWriter, r *http.Request){
 
+	userIdOnToken, erro := authentication.ExtractUserId(r)
+	if erro != nil {
+		response.Erro(w, http.StatusUnauthorized, erro)
+		return
+	}
+
+	db, erro := db.Connect()
+	if erro != nil {
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repositori := repositori.NewRepositoriPublication(db)
+	publications, erro := repositori.SearchAllPublications(userIdOnToken)
+	if erro != nil {
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	response.JSON(w, http.StatusOK, publications)
+
 }
 
 // Traz uma unica publicação
