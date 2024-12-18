@@ -120,3 +120,20 @@ func (repositori Publications) SearchPublicationId(publicationId uint64) (models
 
 	return publication, nil
 }
+
+// Altera od dados de uma publicação no banco de dados
+func (repositori Publications) AlterPublication(publicationId uint64, publication models.Publication) error{
+
+	statement, erro := repositori.db.Prepare(`
+		UPDATE publication p SET p.title = ?, p.content = ? WHERE p.publication_id = ?
+	`)
+	if erro != nil {
+		return erro
+	}
+	defer statement.Close()
+
+	if _, erro = statement.Exec(publication.Title, publication.Content, publication.Id); erro != nil {
+		return erro
+	}
+	return nil
+}
