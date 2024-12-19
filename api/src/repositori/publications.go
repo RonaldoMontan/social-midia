@@ -132,7 +132,7 @@ func (repositori Publications) AlterPublication(publicationId uint64, publicatio
 	}
 	defer statement.Close()
 
-	if _, erro = statement.Exec(publication.Title, publication.Content, publication.Id); erro != nil {
+	if _, erro = statement.Exec(publication.Title, publication.Content, publicationId); erro != nil {
 		return erro
 	}
 	return nil
