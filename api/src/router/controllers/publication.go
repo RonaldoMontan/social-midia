@@ -188,7 +188,7 @@ func DeletePublication(w http.ResponseWriter, r *http.Request){
 	parameters := mux.Vars(r)
 	publicationId, erro := strconv.ParseUint(parameters["publicationsId"], 10, 64)
 	if erro != nil {
-		response.Erro(w, http.StatusUnauthorized, erro)
+		response.Erro(w, http.StatusBadRequest, erro)
 		return
 	}
 
@@ -218,4 +218,30 @@ func DeletePublication(w http.ResponseWriter, r *http.Request){
 	}
 
 	response.JSON(w, http.StatusNoContent, nil)
+}
+
+//Traz todas as publicações do usuario
+func SearchPublicationByUser(w http.ResponseWriter, r *http.Request){
+
+	parameters := mux.Vars(r)
+	userId, erro := strconv.ParseUint(parameters["userId"], 10, 64)
+	if erro != nil {
+		response.Erro(w, http.StatusBadRequest, erro)
+	}
+
+	db, erro := db.Connect()
+	if erro != nil {
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repositori := repositori.NewRepositoriPublication(db)
+	publications, erro := repositori.SearchPublicationByUser(userId)
+	if erro != nil {
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	response.JSON(w, http.StatusOK, publications)
 }
