@@ -137,3 +137,21 @@ func (repositori Publications) AlterPublication(publicationId uint64, publicatio
 	}
 	return nil
 }
+
+// Deleta uma publicação pelo id no banco de dados
+func (repositori Publications) DeletePublication(publicationId uint64) error{
+
+	statement, erro := repositori.db.Prepare(`
+		DELETE FROM publication p where p.publication_id = ?
+	`)
+	if erro != nil {
+		return erro
+	}
+	defer statement.Close()
+
+	if _, erro = statement.Exec(publicationId); erro != nil {
+		return erro
+	}
+
+	return nil
+}
