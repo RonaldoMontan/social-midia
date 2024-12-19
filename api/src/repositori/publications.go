@@ -155,3 +155,45 @@ func (repositori Publications) DeletePublication(publicationId uint64) error{
 
 	return nil
 }
+
+
+// Retorna todas as publicações de um usuario em especifico
+func (repositori Publications) SearchPublicationByUser(userId uint64) ([]models.Publication, error) {
+
+	row, erro := repositori.db.Query(`
+		SELECT 
+			p.*, 
+			u.nick
+		FROM publication p
+		INNER JOIN users u on u.id = p.author_id
+		WHERE
+			p.author_id = ?`, userId,
+	)
+	if erro != nil {
+		return nil, erro
+	}
+	defer row.Close()
+
+	var publications []models.Publication
+
+	for row.Next() {
+		
+		var publication models.Publication
+
+		if erro = row.Scan(
+			&publication.Id,
+			&publication.Title,
+			&publication.Content,
+			&publication.AuthorId,
+			&publication.Likes,
+			&publication.CreatedAt,
+			&publication.AuthorNick,
+
+		); erro != nil {
+			return nil, erro
+		}
+		publications = append(publications, publication)
+	}
+
+	return publications, nil
+}
