@@ -50,4 +50,11 @@ var routePublication = []Route{
 		Function: controllers.SearchPublicationByUser,
 		NeedAuth: true,
 	},
+	// Curtir publicação
+	{
+		Uri: "/publication/{publicationId}/like",
+		Metodo: http.MethodPost,
+		Function: controllers.LikePublication,
+		NeedAuth: true,
+	},
 }
