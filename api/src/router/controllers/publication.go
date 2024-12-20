@@ -245,3 +245,29 @@ func SearchPublicationByUser(w http.ResponseWriter, r *http.Request){
 
 	response.JSON(w, http.StatusOK, publications)
 }
+
+func LikePublication(w http.ResponseWriter, r *http.Request){
+
+	parameters := mux.Vars(r)
+	publicationId, erro := strconv.ParseUint(parameters["publicationId"], 10, 64)
+	if erro != nil {
+		response.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	db, erro := db.Connect()
+	if erro != nil {
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repositori := repositori.NewRepositoriPublication(db)
+	if erro = repositori.LikePublication(publicationId); erro != nil {
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	response.JSON(w, http.StatusNoContent, nil)
+	
+}
