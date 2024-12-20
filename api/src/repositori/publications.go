@@ -197,3 +197,19 @@ func (repositori Publications) SearchPublicationByUser(userId uint64) ([]models.
 
 	return publications, nil
 }
+
+func (repositori Publications) LikePublication(publicationId uint64) error {
+
+	statement, erro := repositori.db.Prepare(`
+		UPDATE publication p SET p.likes = p.likes +1 where p.publication_id = ?
+	`)
+	if erro != nil {
+		return erro
+	}
+	defer statement.Close()
+
+	if _, erro  = statement.Exec(publicationId); erro != nil {
+		return erro
+	}
+	return nil
+}
