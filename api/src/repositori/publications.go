@@ -156,7 +156,6 @@ func (repositori Publications) DeletePublication(publicationId uint64) error{
 	return nil
 }
 
-
 // Retorna todas as publicações de um usuario em especifico
 func (repositori Publications) SearchPublicationByUser(userId uint64) ([]models.Publication, error) {
 
@@ -209,6 +208,28 @@ func (repositori Publications) LikePublication(publicationId uint64) error {
 	defer statement.Close()
 
 	if _, erro  = statement.Exec(publicationId); erro != nil {
+		return erro
+	}
+	return nil
+}
+
+func (repositori Publications) UnlikePublication(publicationId uint64) error {
+
+	statement, erro := repositori.db.Prepare(`
+		UPDATE publication p SET p.likes =
+		CASE
+			WHEN p.likes > 0
+			THEN p.likes -1
+			ELsE p.likes
+		END 
+		WHERE p.publication_id = ?
+	`)
+	if erro != nil {
+		return erro
+	}
+	defer statement.Close()
+
+	if _, erro = statement.Exec(publicationId); erro != nil {
 		return erro
 	}
 	return nil
