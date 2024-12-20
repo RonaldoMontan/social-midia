@@ -57,4 +57,11 @@ var routePublication = []Route{
 		Function: controllers.LikePublication,
 		NeedAuth: true,
 	},
+	// Curtir publicação
+	{
+		Uri: "/publication/{publicationId}/unlike",
+		Metodo: http.MethodPost,
+		Function: controllers.UnlikePublication,
+		NeedAuth: true,
+	},
 }
