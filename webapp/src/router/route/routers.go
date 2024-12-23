@@ -24,5 +24,9 @@ func Configure(r *mux.Router) *mux.Router{
 		r.HandleFunc(route.Uri, route.Function).Methods(route.Method)
 	}
 
+	//fixa o caminho onde está os arquivos de CSS e JS
+	fileServer := http.FileServer(http.Dir("./assets/"))
+	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fileServer))
+
 	return r
 }
