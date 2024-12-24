@@ -12,4 +12,10 @@ var routeUser = []Route{
 		Function: controllers.LoadUserRegstrationPage,
 		NeedAuth: false,
 	},
+	{
+		Uri: "/users",
+		Method: http.MethodPost,
+		Function: controllers.CreateUser,
+		NeedAuth: false,
+	},
 }
