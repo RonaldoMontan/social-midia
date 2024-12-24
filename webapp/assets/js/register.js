@@ -17,13 +17,13 @@ function createUser(event) {
     }
 
     $.ajax({
-        URL: "/users",
+        url: "/users",
         method: "POST",
         data: {
             name: $('#name').val(),
-            nikc: $('#nick').val(),
+            nick: $('#nick').val(),
             email: $('#email').val(),
             password: $('#password').val()
         }
-    })
+    });
 }
