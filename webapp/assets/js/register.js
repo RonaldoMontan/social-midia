@@ -25,5 +25,10 @@ function createUser(event) {
             email: $('#email').val(),
             password: $('#password').val()
         }
+    }).done(function() {
+        alert("User successfully registred");
+    }).fail(function(erro) {
+        console.log(erro);
+        alert("Error while register user");
     });
 }
