@@ -3,7 +3,9 @@ package controllers
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"webapp/src/config"
 	"webapp/src/models"
 	"webapp/src/response"
 )
@@ -22,8 +24,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		response.JSON(w, http.StatusBadRequest, response.ErroAPI{Erro: erro.Error()})
 		return
 	}
-	
-	responseLogin, erro := http.Post("http://localhost:5000/login", "application/json", bytes.NewBuffer(user))
+	//Configura url e realiza a requisição
+	url := fmt.Sprintf("%s/login", config.APIURL)
+	fmt.Println(url)
+	responseLogin, erro := http.Post(url, "application/json", bytes.NewBuffer(user))
 
 	if erro != nil {
 		response.JSON(w, http.StatusInternalServerError, response.ErroAPI{Erro: erro.Error()})
