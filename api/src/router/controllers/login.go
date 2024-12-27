@@ -10,9 +10,10 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"strconv"
 )
 
-func Login(w http.ResponseWriter, r *http.Request){
+func Login(w http.ResponseWriter, r *http.Request) {
 
 	bodyRequest, erro := io.ReadAll(r.Body)
 	if erro != nil {
@@ -27,7 +28,7 @@ func Login(w http.ResponseWriter, r *http.Request){
 	}
 
 	db, erro := db.Connect()
-	if erro != nil{
+	if erro != nil {
 		response.Erro(w, http.StatusInternalServerError, erro)
 		return
 	}
@@ -37,7 +38,7 @@ func Login(w http.ResponseWriter, r *http.Request){
 	userSaveDb, erro := repositoris.SearchEamil(user.Email)
 	if erro != nil {
 		response.Erro(w, http.StatusInternalServerError, erro)
-		return 
+		return
 	}
 
 	if erro = security.VerifyPassword(userSaveDb.Password, user.Password); erro != nil {
@@ -46,9 +47,14 @@ func Login(w http.ResponseWriter, r *http.Request){
 	}
 
 	token, erro := authentication.CreateToken(userSaveDb.Id)
-	if erro != nil{
+	if erro != nil {
 		response.Erro(w, http.StatusInternalServerError, erro)
 	}
-	
-	w.Write([]byte(token))
+
+	userId := strconv.FormatUint(userSaveDb.Id, 10)
+
+	response.JSON(w, http.StatusOK, models.DataAuthentication{
+		Id:    userId,
+		Token: token,
+	})
 }
