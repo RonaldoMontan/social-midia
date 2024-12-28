@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"webapp/src/config"
+	"webapp/src/cookies"
 	"webapp/src/router"
 	"webapp/src/utils"
 )
@@ -12,6 +13,7 @@ import (
 func main(){
 
 	config.LoadConfig()
+	cookies.Configure()
 	utils.LoadingTemplates()
 	r := route.Generate()
 	
