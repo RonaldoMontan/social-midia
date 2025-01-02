@@ -2,6 +2,7 @@ package router
 
 import (
 	"net/http"
+	"webapp/src/middlewares"
 
 	"github.com/gorilla/mux"
 )
@@ -24,7 +25,15 @@ func Configure(r *mux.Router) *mux.Router{
 
 	for _, route := range routers {
 
-		r.HandleFunc(route.Uri, route.Function).Methods(route.Method)
+		if route.NeedAuth {
+			r.HandleFunc(route.Uri,
+			middlewares.Logger(middlewares.Authenticate(route.Function)),
+			).Methods(route.Method)
+		} else {
+			r.HandleFunc(route.Uri,
+				middlewares.Logger(route.Function),
+			).Methods(route.Method)
+		}
 	}
 
 	//fixa o caminho onde está os arquivos de CSS e JS
