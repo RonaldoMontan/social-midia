@@ -19,8 +19,9 @@ type Route struct {
 func Configure(r *mux.Router) *mux.Router{
 
 	routers := routeLogin
-	routers = append(routers, routeUser...)
-	routers = append(routers, routeMainPage)
+	routers = append(routers, routeUser...)//slice de rota precisa ...
+	routers = append(routers, routeMainPage)// uma rota, não precisa ...
+	routers = append(routers, routePublication...)
 
 
 	for _, route := range routers {
