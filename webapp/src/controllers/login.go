@@ -27,7 +27,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	//Configura url e realiza a requisição
 	url := fmt.Sprintf("%s/login", config.APIURL)
-	fmt.Println(url)
+	
 	responseLogin, erro := http.Post(url, "application/json", bytes.NewBuffer(user))
 
 	if erro != nil {
