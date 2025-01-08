@@ -6,6 +6,7 @@ import (
 	"webapp/src/cookies"
 )
 
+//momento em que chama a API
 func MakeRequisitionWithAuth(r *http.Request, method, url string, data io.Reader) (*http.Response, error) {
 
 	request, erro := http.NewRequest(method, url, data)
