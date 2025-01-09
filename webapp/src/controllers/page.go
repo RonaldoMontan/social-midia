@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"webapp/src/config"
+	"webapp/src/cookies"
 	"webapp/src/models"
 	"webapp/src/requisitions"
 	"webapp/src/response"
@@ -46,5 +48,15 @@ func LoadingMainPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.ExecTemplate(w, "home.html", publications)
+	cookie, _ := cookies.Read(r)
+	userId, _ := strconv.ParseUint(cookie["id"], 10, 64)
+
+	utils.ExecTemplate(w, "home.html", struct{
+		//Declaração dos campos da struct
+		Publications []models.Publication
+		UserId uint64
+	}{//Atribuindo valores no struct
+		Publications: publications,
+		UserId: userId,
+	})
 }
