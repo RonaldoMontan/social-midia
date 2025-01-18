@@ -1,5 +1,5 @@
 {{ define "likes" }}
-<i class="fa-solid fa-heart"> </i>
+<i class="fa-solid fa-heart like-publication"> </i>
 <span> {{ .Likes }}  </span>
 {{ end }}
 
@@ -32,7 +32,7 @@
 
 
 {{ define "publication-with-permission" }}
-    <div class="jumbotron" date-publication-id="{{ .Id }}">
+    <div class="jumbotron" data-publication-id="{{ .Id }}">
         {{ template "header-publication" . }}
         <p>
             {{ template "likes" . }} {{ template "edit" . }} {{ template "delete" . }}
@@ -42,7 +42,7 @@
 
 
 {{ define "publication-without-permission" }}
-    <div class="jumbotron" date-publication-id="{{ .Id }}">
+    <div class="jumbotron" data-publication-id="{{ .Id }}">
         {{ template "header-publication" . }}
         <p>
             {{ template "likes" . }}
