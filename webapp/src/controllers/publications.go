@@ -48,8 +48,8 @@ func CreatePublication(w http.ResponseWriter, r*http.Request) {
 // Chama a API para curtir a publicação
 func LikePublication(w http.ResponseWriter, r *http.Request) {
 
-	paramters := mux.Vars(r)
-	publicationId, erro := strconv.ParseUint(paramters["publicationId"], 10, 64)
+	parameters := mux.Vars(r)
+	publicationId, erro := strconv.ParseUint(parameters["publicationId"], 10, 64)//extração de valor
 	if erro != nil {
 		response.JSON(w, http.StatusBadRequest, response.ErroAPI{Erro: erro.Error()})
 		return
@@ -70,4 +70,31 @@ func LikePublication(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.JSON(w, responseLike.StatusCode, nil)
+}
+
+// Chama a API para descurtir a publicação
+func UnlikePublication(w http.ResponseWriter, r *http.Request) {
+
+	parameters := mux.Vars(r)
+	publicationId, erro := strconv.ParseUint(parameters["publicationId"], 10, 64) //extração de valor
+	if erro != nil {
+		response.JSON(w, http.StatusBadRequest, response.ErroAPI{Erro: erro.Error()})
+		return
+	}
+	
+	url := fmt.Sprintf("%s/publication/%d/unlike", config.APIURL, publicationId)
+
+	responseUnlike, erro := requisitions.MakeRequisitionWithAuth(r, http.MethodPost, url, nil)
+	if erro != nil {
+		response.JSON(w, http.StatusInternalServerError, response.ErroAPI{Erro: erro.Error()})
+		return
+	}
+	defer responseUnlike.Body.Close()
+
+	if responseUnlike.StatusCode >= 400 {
+		response.HandleStatusCode(w, responseUnlike)
+		return
+	}
+
+	response.JSON(w, responseUnlike.StatusCode, nil)
 }
